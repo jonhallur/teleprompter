@@ -1,0 +1,24 @@
+<template name="promptPage">
+    <div class="page-header">
+        <nav class="navbar navbar-default">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <h2 class="navbar-text">
+                        {{title}} - ({{fixedDate}})
+                    </h2>
+                </div>
+                <div class="pull-right">
+                    <h2>
+                        <a class="edit-prompt">
+                            <span class="glyphicon glyphicon-pencil" aria-hidden="true" title="Edit Teleprompt"></span>
+                        </a>
+                        <a class="play-prompt">
+                            <span class="glyphicon glyphicon-blackboard" aria-hidden="true" title="Start Presentation"></span>
+                        </a>
+                    </h2>
+                </div>
+            </div>
+        </nav>
+    </div>
+    <textarea readonly title="Prompt Text" class="form-control">{{text}}</textarea>
+</template>

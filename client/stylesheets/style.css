@@ -1,0 +1,13 @@
+textarea {
+    width: 100%;
+    min-height: 70vh;
+    left: 0;
+    top: 0;
+    right: 0;
+    resize: none;
+}
+
+#main {
+    height: 90vh;
+}
+

@@ -1,0 +1,14 @@
+<template name="promptsList">
+{{#if currentUser}}
+    <div class="page-header">
+        <form class="prompt-new input-symbol">
+            <input type="text" placeholder="Type here to add new prompt" class="form-control">
+        </form>
+    </div>
+{{/if}}
+    <div class="prompts content" >
+        {{#each prompts}}
+            {{> promptItem}}
+        {{/each}}
+    </div>
+</template>

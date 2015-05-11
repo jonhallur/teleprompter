@@ -1,0 +1,47 @@
+<template name="promptEdit">
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <h2 class="navbar-text">
+                    {{title}} - ({{fixedDate}})
+                </h2>
+            </div>
+            <div class="pull-right">
+                <h2>
+                    <a class ="save-prompt">
+                        <span class="glyphicon glyphicon-save" aria-hidden="true" title="Save changes"></span>
+                    </a>
+                    <a class="exit-edit">
+                        <span class="glyphicon glyphicon-triangle-left" aria-hidden="true" title="Abort changes"></span>
+                    </a>
+                </h2>
+            </div>
+        </div>
+    </nav>
+    <form class="main form page">
+        <textarea name="prompt-text" id="prompt-text" class="form-control">{{text}}</textarea>
+        <label for="prompt-text"></label>
+    </form>
+</template>
+
+<template name="tbd">
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <h2 class="navbar-text">
+                    {{title}} - ({{fixedDate}})
+                </h2>
+            </div>
+            <div class="pull-right">
+                <h2>
+                    <a class ="save-prompt">
+                        <span class="glyphicon glyphicon-save" aria-hidden="true" title="Save changes"></span>
+                    </a>
+                    <a class="exit-edit">
+                        <span class="glyphicon glyphicon-triangle-left" aria-hidden="true" title="Abort changes"></span>
+                    </a>
+                </h2>
+            </div>
+        </div>
+    </nav>
+</template>
