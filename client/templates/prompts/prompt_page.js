@@ -4,6 +4,22 @@ Template.promptPage.helpers({
     }
 });
 
+Template.promptPage.onDestroyed(function () {
+    $("textarea").sceditor("instance").destroy();
+});
+
+Template.promptPage.rendered = function() {
+    $(function() {
+        $("textarea").sceditor({
+            plugins: "bbcode",
+            style: "minified/jquery.sceditor.default.min.css",
+            toolbar: "",
+            readOnly: true
+        });
+    });
+
+};
+
 Template.promptPage.events({
     'click .edit-prompt': function(event) {
         event.preventDefault();

@@ -7,6 +7,21 @@ Template.promptEdit.helpers({
     }
 });
 
+Template.promptEdit.onDestroyed(function () {
+    $("textarea").sceditor("instance").destroy();
+});
+
+Template.promptEdit.rendered = function() {
+    $(function() {
+        $("textarea").sceditor({
+            plugins: "bbcode",
+            style: "minified/jquery.sceditor.default.min.css",
+            toolbar: "bold,italic,underline|left,center,right,justify|size,color"
+        });
+    });
+
+};
+
 Template.promptEdit.events({
     'click .save-prompt': function(event, template) {
         event.preventDefault();
@@ -14,7 +29,8 @@ Template.promptEdit.events({
         var currentPromptId = this._id;
 
         var promptProperties = {
-            text: template.find('[name=prompt-text]').value
+            //text: template.find('[name=prompt-text]').value
+            text: $("textarea").sceditor("instance").val()
         };
         Prompts.update(currentPromptId, {$set: promptProperties}, function(error) {
             if (error) {

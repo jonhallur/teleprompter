@@ -7,8 +7,7 @@ Template.promptPlay.events({
 });
 
 Template.promptPlay.onRendered(function () {
-    var id = this._id;
-    var main = this.$('#main').context;
+    var prompt_canvas = this.$('#prompt-canvas')[0];
     var scroll = this.$('#scroll-speed')[0];
     var mirror = this.$('#mirror')[0];
     console.log(mirror);
@@ -74,7 +73,10 @@ Template.promptPlay.onRendered(function () {
     var ambientLight = new THREE.AmbientLight(0x333333);
     scene.add(ambientLight);
 
-    var renderer = new THREE.WebGLRenderer({ antialias: true });
+    var renderer = new THREE.WebGLRenderer({
+        antialias: true,
+        canvas: prompt_canvas
+    });
     renderer.setSize(width, height);
     renderer.setClearColor(0x010101, 1);
     renderer.shadowMapEnabled = true;
