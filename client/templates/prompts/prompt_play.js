@@ -81,7 +81,7 @@ Template.promptPlay.onRendered(function () {
     scene.add(text);
     main.appendChild(renderer.domElement);
     var clock = new THREE.Clock();
-
+    var old_scroll = 0;
     function render(context) {
         requestAnimationFrame(render);
         if (text.position.y > (main.clientHeight - textPlaneHeight)/2) {
@@ -92,6 +92,10 @@ Template.promptPlay.onRendered(function () {
             text.rotation.y = 3.1415;
         } else {
             text.rotation.y = 0;
+        }
+        if (old_scroll != scroll.value) {
+            console.log(scroll.value);
+            old_scroll = scroll.value;
         }
         text.position.y += clock.getDelta() * scroll.value;
         renderer.render(scene, camera);
