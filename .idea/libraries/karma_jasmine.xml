@@ -3,11 +3,12 @@
     <properties>
       <option name="frameworkName" value="node_modules" />
       <sourceFilesUrls>
-        <item url="file:///usr/local/lib/node_modules/karma-jasmine/lib" />
+        <item url="file://$USER_HOME$/node_modules/karma-jasmine/lib" />
       </sourceFilesUrls>
     </properties>
     <CLASSES>
       <root url="file:///usr/local/lib/node_modules/karma-jasmine/lib" />
+      <root url="file://$USER_HOME$/node_modules/karma-jasmine/lib" />
     </CLASSES>
     <SOURCES />
   </library>
