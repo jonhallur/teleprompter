@@ -70,9 +70,13 @@ FormatToken.prototype = Object.create(Token.prototype);
 BBCodeParser = function (text) {
 	this.parserLocation = 0;
 	this.text = text;
+	this.hasNext = true;
 };
 
 BBCodeParser.prototype.getNextToken = function () {
+	if (!this.hasNext) {
+		return null;
+	}
 	var start = this.parserLocation;
 	var location = start;
 	var c = this.text[location];
@@ -85,14 +89,20 @@ BBCodeParser.prototype.getNextToken = function () {
 		if (next == FormatStyle.BOLD || next == FormatStyle.ITALIC || next == FormatStyle.UNDERLINE) {
 			if (this.text[location+2] == FormatTag.CLOSE) {
 				this.parserLocation += 3;
-				return new FormatType(FormatMethod.START)
+				return new FormatToken(FormatMethod.START, next, null);
 			}
 		}
 	}
 	for (; location < this.text.length; location++) {
 		if (this.text[location] === " ") {
 			this.parserLocation = location;
-			word = this.text.slice(start, location)
+			var word = this.text.slice(start, location);
+			return new TextToken(word);
+		}
+		else if (location == this.text.length-1) {
+			this.parserLocation = location;
+			var word = this.text.slice(start, location+1);
+			this.hasNext = false;
 			return new TextToken(word);
 		}
 	}

@@ -26,18 +26,20 @@ describe("BBCode parser", function(){
             var firstToken = parser.getNextToken();
             var secondToken = parser.getNextToken();
             expect(firstToken.tokenType).toBe(TokenType.TEXT);
+            expect(firstToken.textValue).toBe("boo");
             expect(secondToken.tokenType).toBe(TokenType.WHITESPACE);
         });
 
-    it("should return text space text"), function() {
+    it("should return text space text", function() {
         var text = "text space";
         var parser = new BBCodeParser(text);
         var firstToken = parser.getNextToken();
         var secondToken = parser.getNextToken();
         var thirdToken = parser.getNextToken();
         expect(firstToken.tokenType).toBe(TokenType.TEXT);
+        expect(firstToken.textValue).toBe("text");
         expect(secondToken.tokenType).toBe(TokenType.WHITESPACE);
         expect(thirdToken.tokenType).toBe(TokenType.TEXT);
         expect(thirdToken.textValue).toBe("space");
-    }
+    })
 });
