@@ -13,15 +13,31 @@ describe("BBCode parser", function(){
     it("Should return one word", function() {
         var first = "boo";
         var text = first + " foo";
-        expect(new BBCodeParser(text).getNextWord()).toBe(first);
+        var firstToken = new BBCodeParser(text).getNextToken();
+        expect(firstToken.tokenType).toBe(TokenType.TEXT);
+        expect(firstToken.textValue).toBe(first);
     });
 
-    it("Should return two words", function() {
-        var first = "boo";
-        var second = "foo";
-        var text = first + " " + second;
+    it("Should return text and space", function() {
+            var first = "boo";
+            var second = " ";
+            var text = first + second;
+            var parser = new BBCodeParser(text);
+            var firstToken = parser.getNextToken();
+            var secondToken = parser.getNextToken();
+            expect(firstToken.tokenType).toBe(TokenType.TEXT);
+            expect(secondToken.tokenType).toBe(TokenType.WHITESPACE);
+        });
+
+    it("should return text space text"), function() {
+        var text = "text space";
         var parser = new BBCodeParser(text);
-        expect(parser.getNextWord()).toBe(first);
-        expect(parser.getNextWord()).toBe(second);
-    })
+        var firstToken = parser.getNextToken();
+        var secondToken = parser.getNextToken();
+        var thirdToken = parser.getNextToken();
+        expect(firstToken.tokenType).toBe(TokenType.TEXT);
+        expect(secondToken.tokenType).toBe(TokenType.WHITESPACE);
+        expect(thirdToken.tokenType).toBe(TokenType.TEXT);
+        expect(thirdToken.textValue).toBe("space");
+    }
 });

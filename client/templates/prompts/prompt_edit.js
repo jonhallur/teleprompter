@@ -16,7 +16,13 @@ Template.promptEdit.rendered = function() {
         $("textarea").sceditor({
             plugins: "bbcode",
             style: "minified/jquery.sceditor.default.min.css",
-            toolbar: "bold,italic,underline|left,center,right,justify|size,color"
+            resizeEnable: false,
+            toolbar: "bold,italic,underline|left,center,right,justify|size,color",
+            colors:
+                "#000000,#000080,#008000,#800000" +
+                "|#444444,#800080,#008080,#808000" +
+                "|#888888,#cc00cc,#00cccc,#cccc00" +
+                "|#cccccc,#ff00ff,#00ffff,#ffff00"
         });
     });
 
