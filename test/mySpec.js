@@ -1,16 +1,19 @@
 
 describe("BBCode parser", function(){
+    "use strict";
     it("Can create object", function() {
        var parser = new BBCodeParser("");
        expect(parser).toBeDefined();
     });
 
     it("Stores all the text", function() {
+        "use strict";
         var text = "foo";
         expect(new BBCodeParser(text).text).toBe(text);
     });
 
     it("Should return one word", function() {
+        "use strict";
         var first = "boo";
         var text = first + " foo";
         var firstToken = new BBCodeParser(text).getNextToken();
@@ -19,6 +22,7 @@ describe("BBCode parser", function(){
     });
 
     it("Should return text and space", function() {
+        "use strict";
             var first = "boo";
             var second = " ";
             var text = first + second;
@@ -28,9 +32,10 @@ describe("BBCode parser", function(){
             expect(firstToken.tokenType).toBe(TokenType.TEXT);
             expect(firstToken.textValue).toBe("boo");
             expect(secondToken.tokenType).toBe(TokenType.WHITESPACE);
-        });
+    });
 
     it("should return text space text", function() {
+        "use strict";
         var text = "text space";
         var parser = new BBCodeParser(text);
         var firstToken = parser.getNextToken();
@@ -69,6 +74,7 @@ describe("BBCode parser", function(){
         expect(firstToken.tokenType).toBe(TokenType.FORMAT);
         expect(firstToken.formatMethod).toBe(FormatMethod.START);
         expect(firstToken.value).toBe(FormatStyle.BOLD);
+        expect(firstToken.formatType).toBe(FormatType.STYLE);
     });
 
     it("should return text on wrongly formatted bold tag", function () {
@@ -112,6 +118,23 @@ describe("BBCode parser", function(){
         expect(firstToken.tokenType).toBe(TokenType.FORMAT);
         expect(firstToken.formatMethod).toBe(FormatMethod.START);
         expect(firstToken.value).toBe(FormatAligment.LEFT);
+        expect(firstToken.formatType).toBe(FormatType.ALIGNMENT);
     });
 
+    it("should return null on finish", function () {
+        var parser = new BBCodeParser("a");
+        var firstToken = parser.getNextToken();
+        var secondToken = parser.getNextToken();
+        expect(firstToken.tokenType).toBe(TokenType.TEXT);
+        expect(secondToken).toBeNull();
+    });
+
+    it("should recognize a whole [color=#??????] tag", function () {
+        var colorTag = "[color=#123456]";
+        var parser = new BBCodeParser(colorTag);
+        var firstToken = parser.getNextToken();
+        expect(firstToken.tokenType).toBe(TokenType.FORMAT);
+        expect(firstToken.tokenMethod).toBe(FormatMethod.START);
+        expect(firstToken.formatType).toBe(FormatType.COLOR);
+    });
 });
