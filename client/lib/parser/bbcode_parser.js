@@ -40,7 +40,9 @@ var FormatAligment = {
     JUSTIFY: "justify"
 };
 
-var colorOpenRegex = /\[color=#[0-9a-f\]{6}]/;
+var styleRegex = /\[\/?[b|i|u]\]/;
+var alignRegex = /\[\/?(left|center|right|justify)\]/;
+var colorOpenRegex = /\[color=#[0-9a-f]{6}\]/;
 var colorCloseRegex = /\[\/color\]/;
 var sizeOpenRegex = /\[size=[1-7]\]/;
 var sizeCloseRegex = /\[\/size\]/;
@@ -149,13 +151,45 @@ BBCodeParser.prototype.getNextToken = function () {
     };
 
     this._parseColorAndSizeFormat = function () {
-        var formatMethod = FormatMethod.START,
-            formatLengthModifier = 1,
-            alignCharLocation = start + 1;
-        if (alignCharLocation === this.text.length) {
+        var tagStartLocation = start + 1,
+            colorValueLocation = 8,
+            sizeValueLocation = 6;
+        if (tagStartLocation === this.text.length) {
             return null;
         }
-
+        var maxTagLength = 15;
+        var testString = this.text.slice(this.parserLocation, this.parserLocation + maxTagLength);
+        if (colorOpenRegex.test(testString)) {
+            this.parserLocation += 15;
+            return new FormatToken(
+                FormatMethod.START,
+                FormatType.COLOR,
+                testString.slice(colorValueLocation, colorValueLocation + 6));
+        }
+        else if (colorCloseRegex.test(testString)) {
+            this.parserLocation += 8;
+            return new FormatToken(
+                FormatMethod.END,
+                FormatType.COLOR,
+                null
+            );
+        }
+        else if (sizeOpenRegex.test(testString)) {
+            this.parserLocation += 8;
+            return new FormatToken(
+                FormatMethod.START,
+                FormatType.SIZE,
+                testString.slice(sizeValueLocation, sizeValueLocation+1)
+            )
+        }
+        else if (sizeCloseRegex.test(testString)) {
+            this.parserLocation += 7;
+            return new FormatToken(
+                FormatMethod.END,
+                FormatType.SIZE,
+                null
+            )
+        }
         return null;
     };
     if (c === FormatTag.OPEN) {
@@ -174,9 +208,22 @@ BBCodeParser.prototype.getNextToken = function () {
     }
 
     for (location; this.text.length > location; location++) {
-        if ((this.text[location] === " ")) {
+        if (this.text[location] === " ") {
             this.parserLocation = location;
             return new TextToken(this.text.slice(start, location));
+        } else if (this.text[location] === FormatTag.OPEN) {
+            var testText = this.text.slice(location, location + 15);
+            if (
+                    styleRegex.test(testText) ||
+                    alignRegex.test(testText) ||
+                    colorOpenRegex.test(testText) ||
+                    colorCloseRegex.test(testText) ||
+                    sizeOpenRegex.test(testText) ||
+                    sizeCloseRegex.test(testText)
+            ) {
+                this.parserLocation = location;
+                return new TextToken(this.text.slice(start, location));
+            }
         }
         if (location + 1 === this.text.length) {
             this.parserLocation = location + 1;

@@ -134,7 +134,55 @@ describe("BBCode parser", function(){
         var parser = new BBCodeParser(colorTag);
         var firstToken = parser.getNextToken();
         expect(firstToken.tokenType).toBe(TokenType.FORMAT);
-        expect(firstToken.tokenMethod).toBe(FormatMethod.START);
+        expect(firstToken.formatMethod).toBe(FormatMethod.START);
         expect(firstToken.formatType).toBe(FormatType.COLOR);
+        expect(firstToken.value).toBe("123456");
     });
+
+    it("should recognize a whole [/color] tag", function () {
+        var colorTag = "[/color]";
+        var parser = new BBCodeParser(colorTag);
+        var firstToken = parser.getNextToken();
+        var secondToken = parser.getNextToken();
+        expect(firstToken.tokenType).toBe(TokenType.FORMAT);
+        expect(firstToken.formatMethod).toBe(FormatMethod.END);
+        expect(firstToken.formatType).toBe(FormatType.COLOR);
+        expect(firstToken.value).toBeNull();
+        expect(secondToken).toBeNull();
+    });
+
+    it("should recognize a [size=7] tag", function () {
+        var text = "[size=7]";
+        var parser = new BBCodeParser(text);
+        var firstToken = parser.getNextToken();
+        expect(firstToken.tokenType).toBe(TokenType.FORMAT);
+        expect(firstToken.value).toBe("7");
+        expect(parser.getNextToken()).toBeNull();
+    });
+
+    it("Should recognize a long string of valid data", function () {
+        var text = "This is a [b]valid[/b] string of [size=5]words[/size]\n ";
+        var parser = new BBCodeParser(text);
+        expect(parser.getNextToken().tokenType).toBe(TokenType.TEXT); // This
+        expect(parser.getNextToken().tokenType).toBe(TokenType.WHITESPACE);
+        expect(parser.getNextToken().tokenType).toBe(TokenType.TEXT);
+        expect(parser.getNextToken().tokenType).toBe(TokenType.WHITESPACE);
+        expect(parser.getNextToken().tokenType).toBe(TokenType.TEXT);
+        expect(parser.getNextToken().tokenType).toBe(TokenType.WHITESPACE);
+        expect(parser.getNextToken().tokenType).toBe(TokenType.FORMAT);
+        expect(parser.getNextToken().tokenType).toBe(TokenType.TEXT);
+        expect(parser.getNextToken().tokenType).toBe(TokenType.FORMAT);
+        expect(parser.getNextToken().tokenType).toBe(TokenType.WHITESPACE);
+        expect(parser.getNextToken().tokenType).toBe(TokenType.TEXT);
+        expect(parser.getNextToken().tokenType).toBe(TokenType.WHITESPACE);
+        expect(parser.getNextToken().tokenType).toBe(TokenType.TEXT);
+        expect(parser.getNextToken().tokenType).toBe(TokenType.WHITESPACE);
+        expect(parser.getNextToken().tokenType).toBe(TokenType.FORMAT);
+        expect(parser.getNextToken().tokenType).toBe(TokenType.TEXT);
+        expect(parser.getNextToken().tokenType).toBe(TokenType.FORMAT);
+        expect(parser.getNextToken().tokenType).toBe(TokenType.WHITESPACE);
+        expect(parser.getNextToken().tokenType).toBe(TokenType.WHITESPACE);
+        expect(parser.getNextToken()).toBeNull();
+
+    })
 });
