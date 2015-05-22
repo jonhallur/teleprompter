@@ -119,6 +119,7 @@ describe("BBCode parser", function(){
         expect(firstToken.formatMethod).toBe(FormatMethod.START);
         expect(firstToken.value).toBe(FormatAligment.LEFT);
         expect(firstToken.formatType).toBe(FormatType.ALIGNMENT);
+        expect(parser.getNextToken()).toBeNull();
     });
 
     it("should return null on finish", function () {
@@ -161,7 +162,7 @@ describe("BBCode parser", function(){
     });
 
     it("Should recognize a long string of valid data", function () {
-        var text = "This is a [b]valid[/b] string of [size=5]words[/size]\n ";
+        var text = "This is a [b]valid[/b] string of [size=5]words[/size] \n";
         var parser = new BBCodeParser(text);
         expect(parser.getNextToken().tokenType).toBe(TokenType.TEXT); // This
         expect(parser.getNextToken().tokenType).toBe(TokenType.WHITESPACE);
@@ -181,8 +182,16 @@ describe("BBCode parser", function(){
         expect(parser.getNextToken().tokenType).toBe(TokenType.TEXT);
         expect(parser.getNextToken().tokenType).toBe(TokenType.FORMAT);
         expect(parser.getNextToken().tokenType).toBe(TokenType.WHITESPACE);
-        expect(parser.getNextToken().tokenType).toBe(TokenType.WHITESPACE);
+        expect(parser.getNextToken().whiteSpaceType).toBe(WhiteSpaceType.NEWLINE);
         expect(parser.getNextToken()).toBeNull();
+
+    });
+
+    it("Should find a new line", function () {
+        var text = String.fromCharCode(10,10);
+        var parser = new BBCodeParser(text);
+        expect(parser.getNextToken().whiteSpaceType).toBe(WhiteSpaceType.NEWLINE);
+        expect(parser.getNextToken().whiteSpaceType).toBe(WhiteSpaceType.NEWLINE);
 
     })
 });

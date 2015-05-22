@@ -5,8 +5,8 @@ var TokenType = {
 };
 
 var WhiteSpaceType = {
-    SPACE: '\ ',
-    NEWLINE: '\n'
+    SPACE: 32,
+    NEWLINE: 10
 };
 
 var FormatTag = {
@@ -91,9 +91,16 @@ BBCodeParser.prototype.getNextToken = function () {
         return null;
     }
     var start = this.parserLocation, location = start, c = this.text[location], formatToken = null;
-    if (c === WhiteSpaceType.NEWLINE || c === WhiteSpaceType.SPACE) {
+    if (c.charCodeAt() < 33) {
+        console.log("found :" + c.charCodeAt());
+    }
+    if (c.charCodeAt() === WhiteSpaceType.NEWLINE) {
         this.parserLocation++;
-        return new WhiteSpaceToken(c);
+        return new WhiteSpaceToken(WhiteSpaceType.NEWLINE);
+    }
+    if (c.charCodeAt() === WhiteSpaceType.SPACE) {
+        this.parserLocation++;
+        return new WhiteSpaceToken(WhiteSpaceType.SPACE);
     }
     this._parseStyleFormat = function () {
         var formatMethod = FormatMethod.START,
@@ -143,6 +150,7 @@ BBCodeParser.prototype.getNextToken = function () {
             if (this.text.length < alignCharLocation + tagLength) {
                 return null;
             } else if (this.text.slice(alignCharLocation, alignCharLocation + tagLength) === alignmentList[index]){
+                this.parserLocation += tagLength + 2;
                 return new FormatToken(FormatMethod.START, FormatType.ALIGNMENT, alignmentList[index]);
             }
 
@@ -208,7 +216,7 @@ BBCodeParser.prototype.getNextToken = function () {
     }
 
     for (location; this.text.length > location; location++) {
-        if (this.text[location] === " ") {
+        if (this.text[location] === " " || this.text[location] === "\n") {
             this.parserLocation = location;
             return new TextToken(this.text.slice(start, location));
         } else if (this.text[location] === FormatTag.OPEN) {
