@@ -24,7 +24,8 @@ var FormatType = {
     STYLE: "style",
     ALIGNMENT: "alignment",
     SIZE: "size",
-    COLOR: "color"
+    COLOR: "color",
+    FONT: "font"
 };
 
 var FormatStyle = {
@@ -46,6 +47,8 @@ var colorOpenRegex = /\[color=#[0-9a-f]{6}\]/;
 var colorCloseRegex = /\[\/color\]/;
 var sizeOpenRegex = /\[size=[1-7]\]/;
 var sizeCloseRegex = /\[\/size\]/;
+var fontOpenRegex = /\[font=[a-zA-z ,.]{1,50}\]/;
+var fontCloseRegex = /\[\/font\]/;
 
 var styleList = [FormatStyle.BOLD, FormatStyle.ITALIC, FormatStyle.UNDERLINE];
 var alignmentList = [FormatAligment.LEFT, FormatAligment.CENTER, FormatAligment.RIGHT, FormatAligment.JUSTIFY];
@@ -132,7 +135,7 @@ BBCodeParser.prototype.getNextToken = function () {
 
     this._parseAlignmentFormat = function () {
         var formatMethod = FormatMethod.START,
-            formatLengthModifier = 1,
+            formatLengthModifier = 2,
             alignCharLocation = start + 1;
         if (alignCharLocation === this.text.length) {
             return null;
@@ -142,7 +145,7 @@ BBCodeParser.prototype.getNextToken = function () {
                 return null;
             }
             alignCharLocation++;
-            formatLengthModifier++;
+            formatLengthModifier += 1;
             formatMethod = FormatMethod.END;
         }
         for (var index in alignmentList) {
@@ -150,8 +153,8 @@ BBCodeParser.prototype.getNextToken = function () {
             if (this.text.length < alignCharLocation + tagLength) {
                 return null;
             } else if (this.text.slice(alignCharLocation, alignCharLocation + tagLength) === alignmentList[index]){
-                this.parserLocation += tagLength + 2;
-                return new FormatToken(FormatMethod.START, FormatType.ALIGNMENT, alignmentList[index]);
+                this.parserLocation += tagLength + formatLengthModifier;
+                return new FormatToken(formatMethod, FormatType.ALIGNMENT, alignmentList[index]);
             }
 
         }
@@ -174,7 +177,8 @@ BBCodeParser.prototype.getNextToken = function () {
                 FormatType.COLOR,
                 testString.slice(colorValueLocation, colorValueLocation + 6));
         }
-        else if (colorCloseRegex.test(testString)) {
+        testString = this.text.slice(this.parserLocation, this.parserLocation + 8);
+        if (colorCloseRegex.test(testString)) {
             this.parserLocation += 8;
             return new FormatToken(
                 FormatMethod.END,
@@ -182,7 +186,8 @@ BBCodeParser.prototype.getNextToken = function () {
                 null
             );
         }
-        else if (sizeOpenRegex.test(testString)) {
+        testString = this.text.slice(this.parserLocation, this.parserLocation + 8);
+        if (sizeOpenRegex.test(testString)) {
             this.parserLocation += 8;
             return new FormatToken(
                 FormatMethod.START,
@@ -190,7 +195,8 @@ BBCodeParser.prototype.getNextToken = function () {
                 testString.slice(sizeValueLocation, sizeValueLocation+1)
             )
         }
-        else if (sizeCloseRegex.test(testString)) {
+        testString = this.text.slice(this.parserLocation, this.parserLocation + 7);
+        if (sizeCloseRegex.test(testString)) {
             this.parserLocation += 7;
             return new FormatToken(
                 FormatMethod.END,
@@ -200,6 +206,33 @@ BBCodeParser.prototype.getNextToken = function () {
         }
         return null;
     };
+
+    this._parseFontFormat = function () {
+        var maxTagLength = 50;
+        var searchString = this.text.slice(this.parserLocation, this.parserLocation + maxTagLength)
+        if (fontOpenRegex.test(searchString)) {
+            var index = searchString.indexOf(FormatTag.CLOSE);
+            if (index !== -1) {
+                this.parserLocation += index+1;
+                return new FormatToken(
+                    FormatMethod.START,
+                    FormatType.FONT
+                )
+            }
+        }
+        else if (fontCloseRegex.test(searchString)) {
+            var index = searchString.indexOf(FormatTag.CLOSE);
+            if (index !== -1) {
+                this.parserLocation += index+1;
+                return new FormatToken(
+                    FormatMethod.END,
+                    FormatType.FONT
+                )
+            }
+        }
+        return null;
+    };
+
     if (c === FormatTag.OPEN) {
         formatToken = this._parseStyleFormat();
         if (formatToken !== null) {
@@ -210,6 +243,10 @@ BBCodeParser.prototype.getNextToken = function () {
             return formatToken;
         }
         formatToken = this._parseColorAndSizeFormat();
+        if (formatToken !== null) {
+            return formatToken;
+        }
+        formatToken = this._parseFontFormat();
         if (formatToken !== null) {
             return formatToken;
         }
@@ -227,7 +264,8 @@ BBCodeParser.prototype.getNextToken = function () {
                     colorOpenRegex.test(testText) ||
                     colorCloseRegex.test(testText) ||
                     sizeOpenRegex.test(testText) ||
-                    sizeCloseRegex.test(testText)
+                    sizeCloseRegex.test(testText) ||
+                    fontCloseRegex.test(testText)
             ) {
                 this.parserLocation = location;
                 return new TextToken(this.text.slice(start, location));

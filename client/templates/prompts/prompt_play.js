@@ -16,7 +16,7 @@ Template.promptPlay.onRendered(function () {
     var height = main.clientHeight;
 
     // TEX
-    var fontSize = 84;
+    var fontSize = 24;
 
 // The square letter texture will have 16 * 16 = 256 letters, enough for all 8-bit characters.
     var lettersPerSide = 16;
@@ -48,9 +48,12 @@ Template.promptPlay.onRendered(function () {
         if (current.tokenType === TokenType.TEXT) {
             var x_forcast = fontSize*current.textValue.length*0.55
             if ((x + x_forcast) > c.width) {
-                x = fontSize;
+                x = fontSize*0.55;
                 y = y + fontSize
 
+            }
+            if (y > c.height) {
+                break;
             }
             ctx.fillText(current.textValue, x, y);
             x = x + x_forcast;
@@ -59,7 +62,7 @@ Template.promptPlay.onRendered(function () {
             if (current.whiteSpaceType === WhiteSpaceType.NEWLINE) {
                 console.log("new line");
                 y = y + fontSize;
-                x = fontSize;
+                x = fontSize*0.55;
             }
             if (current.whiteSpaceType === WhiteSpaceType.SPACE) {
                 x = x + fontSize*0.55;

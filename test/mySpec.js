@@ -112,14 +112,18 @@ describe("BBCode parser", function(){
 
     it("should return a valid [left] token", function () {
         "use strict";
-        var text = "[left]";
+        var text = "[left]text[/left]\n";
         var parser = new BBCodeParser(text);
         var firstToken = parser.getNextToken();
         expect(firstToken.tokenType).toBe(TokenType.FORMAT);
         expect(firstToken.formatMethod).toBe(FormatMethod.START);
         expect(firstToken.value).toBe(FormatAligment.LEFT);
         expect(firstToken.formatType).toBe(FormatType.ALIGNMENT);
-        expect(parser.getNextToken()).toBeNull();
+        expect(parser.getNextToken().tokenType).toBe(TokenType.TEXT);
+        expect(parser.getNextToken().tokenType).toBe(TokenType.FORMAT);
+        expect(parser.getNextToken().tokenType).toBe(TokenType.WHITESPACE);
+
+
     });
 
     it("should return null on finish", function () {
@@ -193,5 +197,48 @@ describe("BBCode parser", function(){
         expect(parser.getNextToken().whiteSpaceType).toBe(WhiteSpaceType.NEWLINE);
         expect(parser.getNextToken().whiteSpaceType).toBe(WhiteSpaceType.NEWLINE);
 
+    });
+
+    it("should detect open and close color tags", function () {
+        var text = "this [color=#123456]text[/color] is colored";
+        var parser = new BBCodeParser(text);
+        expect(parser.getNextToken().tokenType).toBe(TokenType.TEXT);
+        expect(parser.getNextToken().tokenType).toBe(TokenType.WHITESPACE);
+        expect(parser.getNextToken().tokenType).toBe(TokenType.FORMAT);
+        expect(parser.getNextToken().tokenType).toBe(TokenType.TEXT);
+        expect(parser.getNextToken().tokenType).toBe(TokenType.FORMAT);
+        expect(parser.getNextToken().tokenType).toBe(TokenType.WHITESPACE);
+        expect(parser.getNextToken().tokenType).toBe(TokenType.TEXT);
+        expect(parser.getNextToken().tokenType).toBe(TokenType.WHITESPACE);
+        expect(parser.getNextToken().tokenType).toBe(TokenType.TEXT);
+    });
+
+    it("Should not fail on font tag", function () {
+        var text = "[center][left][color=#cc00cc][size=7][font=Arial, Helvetica, sans]Lorem ipsum dolor sit amet, consectetur adipiscing elit.[/font][/size][/color][/left]";
+        var parser = new BBCodeParser(text);
+        expect(parser.getNextToken().value).toBe("center");
+        expect(parser.getNextToken().value).toBe("left");
+        expect(parser.getNextToken().tokenType).toBe(TokenType.FORMAT);
+        expect(parser.getNextToken().tokenType).toBe(TokenType.FORMAT);
+        expect(parser.getNextToken().tokenType).toBe(TokenType.FORMAT);
+        expect(parser.getNextToken().tokenType).toBe(TokenType.TEXT);
+        expect(parser.getNextToken().tokenType).toBe(TokenType.WHITESPACE);
+        expect(parser.getNextToken().tokenType).toBe(TokenType.TEXT);
+        expect(parser.getNextToken().tokenType).toBe(TokenType.WHITESPACE);
+        expect(parser.getNextToken().tokenType).toBe(TokenType.TEXT);
+        expect(parser.getNextToken().tokenType).toBe(TokenType.WHITESPACE);
+        expect(parser.getNextToken().tokenType).toBe(TokenType.TEXT);
+        expect(parser.getNextToken().tokenType).toBe(TokenType.WHITESPACE);
+        expect(parser.getNextToken().tokenType).toBe(TokenType.TEXT);
+        expect(parser.getNextToken().tokenType).toBe(TokenType.WHITESPACE);
+        expect(parser.getNextToken().tokenType).toBe(TokenType.TEXT);
+        expect(parser.getNextToken().tokenType).toBe(TokenType.WHITESPACE);
+        expect(parser.getNextToken().tokenType).toBe(TokenType.TEXT);
+        expect(parser.getNextToken().tokenType).toBe(TokenType.WHITESPACE);
+        expect(parser.getNextToken().textValue).toBe("elit.");
+        expect(parser.getNextToken().formatType).toBe(FormatType.FONT);
+        expect(parser.getNextToken().formatType).toBe(FormatType.SIZE);
+        expect(parser.getNextToken().formatType).toBe(FormatType.COLOR);
+        expect(parser.getNextToken().formatType).toBe(FormatType.ALIGNMENT);
     })
 });
