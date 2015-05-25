@@ -95,7 +95,6 @@ BBCodeParser.prototype.getNextToken = function () {
     }
     var start = this.parserLocation, location = start, c = this.text[location], formatToken = null;
     if (c.charCodeAt() < 33) {
-        console.log("found :" + c.charCodeAt());
     }
     if (c.charCodeAt() === WhiteSpaceType.NEWLINE) {
         this.parserLocation++;
@@ -163,7 +162,7 @@ BBCodeParser.prototype.getNextToken = function () {
 
     this._parseColorAndSizeFormat = function () {
         var tagStartLocation = start + 1,
-            colorValueLocation = 8,
+            colorValueLocation = 7,
             sizeValueLocation = 6;
         if (tagStartLocation === this.text.length) {
             return null;
@@ -175,7 +174,7 @@ BBCodeParser.prototype.getNextToken = function () {
             return new FormatToken(
                 FormatMethod.START,
                 FormatType.COLOR,
-                testString.slice(colorValueLocation, colorValueLocation + 6));
+                testString.slice(colorValueLocation, colorValueLocation + 7));
         }
         testString = this.text.slice(this.parserLocation, this.parserLocation + 8);
         if (colorCloseRegex.test(testString)) {

@@ -141,7 +141,7 @@ describe("BBCode parser", function(){
         expect(firstToken.tokenType).toBe(TokenType.FORMAT);
         expect(firstToken.formatMethod).toBe(FormatMethod.START);
         expect(firstToken.formatType).toBe(FormatType.COLOR);
-        expect(firstToken.value).toBe("123456");
+        expect(firstToken.value).toBe("#123456");
     });
 
     it("should recognize a whole [/color] tag", function () {
@@ -164,6 +164,24 @@ describe("BBCode parser", function(){
         expect(firstToken.value).toBe("7");
         expect(parser.getNextToken()).toBeNull();
     });
+
+    if("should recognize a valid size open close tag", function () {
+            var text = "[size=5]text[/size]";
+            var parser = new BBCodeParser(text);
+            var first = parser.getNextToken();
+            var second = parser.getNextToken();
+            var third = parser.getNextToken();
+            expect(first.tokenType).toBe(TokenType.FORMAT);
+            expect(first.formatType).toBe(FormatType.SIZE);
+            expect(first.value).toBe("5");
+            expect(first.formatMethod).toBe(FormatMethod.START);
+            expect(second.tokenType).toBe(TokenType.TEXT);
+            expect(second.textValue).toBe("text");
+            expect(third.tokenType).toBe(TokenType.FORMAT);
+            expect(third.formatType).toBe(FormatType.SIZE);
+            expect(third.formatMethod).toBe(FormatMethod.END);
+            expect(third.value).toBeNull();
+        })
 
     it("Should recognize a long string of valid data", function () {
         var text = "This is a [b]valid[/b] string of [size=5]words[/size] \n";

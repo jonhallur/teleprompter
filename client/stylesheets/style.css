@@ -11,3 +11,8 @@ textarea {
     height: 90vh;
 }
 
+#playOut {
+    margin-left: auto;
+    margin-right: auto;
+    width: 90%;
+}
